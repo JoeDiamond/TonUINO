@@ -258,7 +258,7 @@ uint8_t checkInput()
   for (uint8_t i = 0; i < buCount; i++)
   {
     bounce[i].update();
-    
+
     // button was pushed
     if (bounce[i].fell())
     {
@@ -519,6 +519,13 @@ uint8_t readNfcTagData()
           Serial.print(nfcTag.track);
           Serial.println(F(" was detected"));
         }
+        else{
+          nfcTag.cookie = 0;
+          nfcTag.version = 0;
+          nfcTag.assignedFolder = 0;
+          nfcTag.playbackMode = 0;
+          nfcTag.track = 0;
+        }
         returnCode = 1;
       }
     }
@@ -674,8 +681,13 @@ void setup()
   mp3.playMp3FolderTrack(msgWelcome);
 }
 
+uint32_t ts1;
+// ...TASK TO BE MEASURED GOES HERE
+uint32_t ts2;
+
 void loop()
 {
+  ts1 = millis();
   uint8_t inputEvent = checkInput();
   bool isPlaying = !digitalRead(mp3BusyPin);
 
@@ -1256,4 +1268,9 @@ void loop()
 #endif
 
   mp3.loop();
+
+  ts2 = millis();
+
+  // print the time interval in milliseconds
+  Serial.println(ts2 - ts1);
 }
